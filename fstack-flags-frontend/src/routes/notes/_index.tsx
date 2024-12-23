@@ -1,9 +1,34 @@
-import { type ReactNode } from "react";
+import { type ReactNode, useCallback, useEffect, useState } from "react";
 import NotificationBlock from "../../components/shared/notification-block.tsx";
 import PageWrapper from "../../components/shared/page-wrapper.tsx";
 import { BiSolidNote } from "react-icons/bi";
+import NotesService from "../../services/notes-service.ts";
+import { Note } from "../../@types/fstack-flags";
+import NoteCard from "../../components/notes/note-card.tsx";
+import NoResultBlock from "../../components/shared/no-result-block.tsx";
 
 export default function NotesIndex(): ReactNode {
+  const [filterText, setFilterText] = useState<string>("");
+  const [notes, setNotes] = useState<Array<Note>>([]);
+
+  const filteredNotes = filterText
+    ? notes.filter((note) => note.title.includes(filterText))
+    : notes;
+
+  const fetchNotes = useCallback(() => {
+    const _exec = async () => {
+      const notesService = new NotesService();
+      const notesOrNull = await notesService.getNotes();
+      if (notesOrNull) setNotes(notesOrNull);
+    };
+
+    _exec().then();
+  }, []);
+
+  useEffect(() => {
+    fetchNotes();
+  }, [fetchNotes]);
+
   return (
     <PageWrapper
       pageTitle='Note Listing'
@@ -24,6 +49,34 @@ export default function NotesIndex(): ReactNode {
         </p>
         <p>We will be removing this component eventually.</p>
       </NotificationBlock>
+      <div className='py-2'>
+        <label
+          htmlFor='noteFilter'
+          className='text-blue-400 font-bold'
+        >
+          Filter Notes
+        </label>
+        <input
+          id='noteFilter'
+          type='text'
+          className='p-2 rounded border-2 border-blue-300 text-blue-600 w-full'
+          placeholder='Filter notes by title'
+          onChange={(e) => setFilterText(e.target.value)}
+          value={filterText}
+        />
+      </div>
+      {filteredNotes.length ? (
+        <div className='grid grid-cols-1 gap-4'>
+          {filteredNotes.map((note) => (
+            <NoteCard
+              key={`note-${note.id}`}
+              note={note}
+            />
+          ))}
+        </div>
+      ) : (
+        <NoResultBlock />
+      )}
     </PageWrapper>
   );
 }
