@@ -2,9 +2,10 @@ import { FormEvent, type ReactNode, useCallback, useEffect, useState } from "rea
 import PageWrapper from "../../components/shared/page-wrapper.tsx";
 import { useNavigate, useParams } from "react-router";
 import FormFieldWrapper from "../../components/shared/form-field-wrapper.tsx";
-import { BiSolidSave } from "react-icons/bi";
+import { BiSolidArrowToLeft, BiSolidSave, BiSolidTrash } from "react-icons/bi";
 import { NoteFormError } from "../../@types/fstack-flags";
 import NotesService from "../../services/notes-service.ts";
+import ConfirmDialog from "../../components/shared/confirm-dialog.tsx";
 
 type NoteProps = {
   isNewNote: boolean;
@@ -25,18 +26,23 @@ export default function Note({ isNewNote }: NoteProps): ReactNode {
     content: "",
   });
   const [noteFormErrors, setNoteFormErrors] = useState<NoteFormError>({});
+  const [showDeleteNote, setShowDeleteNote] = useState<boolean>(false);
 
   const fetchNote = useCallback(() => {
     const _exec = async () => {
       if (!noteId) return;
       const notesService = new NotesService();
       const note = await notesService.getNote(noteId);
-      if (note) {
-        setNoteData({
-          title: note.title,
-          content: note.content,
-        });
+
+      if (!note) {
+        alert("Failed to retrieve the corresponding note");
+        return navigate("/");
       }
+
+      setNoteData({
+        title: note.title,
+        content: note.content,
+      });
     };
 
     _exec().then();
@@ -70,6 +76,22 @@ export default function Note({ isNewNote }: NoteProps): ReactNode {
     [noteData, noteId]
   );
 
+  const deleteNote = useCallback(() => {
+    const _exec = async () => {
+      if (!noteId) return;
+      const notesService = new NotesService();
+      const response = await notesService.deleteNote(noteId);
+      if (response.success) {
+        return navigate("/");
+      }
+
+      alert(`Failed to delete note${response.message ? `with error: ${response.message}` : ""}`);
+    };
+
+    setShowDeleteNote(false);
+    _exec().then();
+  }, [noteId]);
+
   useEffect(() => {
     fetchNote();
   }, [fetchNote]);
@@ -78,6 +100,17 @@ export default function Note({ isNewNote }: NoteProps): ReactNode {
     <PageWrapper
       pageTitle={`${isNewNote ? "Create New" : "Edit Existing"} Note`}
       subtitle={`Use the form below to ${isNewNote ? "create a new note" : "edit an existing note"}`}
+      rightContent={
+        !isNewNote ? (
+          <button
+            className='flex items-center bg-red-600 hover:bg-red-500 duration-200 cursor-pointer text-white p-2 rounded gap-2'
+            onClick={() => setShowDeleteNote(true)}
+          >
+            <BiSolidTrash />
+            Delete Note
+          </button>
+        ) : null
+      }
     >
       <form
         className='flex flex-col gap-4'
@@ -118,6 +151,37 @@ export default function Note({ isNewNote }: NoteProps): ReactNode {
           </button>
         </div>
       </form>
+      <ConfirmDialog
+        content={
+          <>
+            <p className='text-lg'>
+              You are about to delete the note <span className='font-bold'>{noteData.title}</span>.
+              Would you like to continue?
+            </p>
+          </>
+        }
+        dialogActionElements={
+          <div className='flex items-center gap-4'>
+            <button
+              className='flex items-center text-white gap-2 p-2 rounded bg-slate-600'
+              onClick={() => setShowDeleteNote(false)}
+            >
+              <BiSolidArrowToLeft />
+              No, don't delete it
+            </button>
+            <button
+              className='flex items-center text-white gap-2 p-2 rounded bg-red-600'
+              onClick={() => deleteNote()}
+            >
+              <BiSolidTrash />
+              Yes, delete it
+            </button>
+          </div>
+        }
+        dialogDismissAction={() => setShowDeleteNote(false)}
+        dialogOpen={showDeleteNote}
+        titleText='Delete Note?'
+      />
     </PageWrapper>
   );
 }

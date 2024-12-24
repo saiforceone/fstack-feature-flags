@@ -43,6 +43,12 @@ class NotesController(HTTPEndpoint):
                     'success': False
                 })
 
+            if note is None:
+                return JSONResponse({
+                    'success': False,
+                    'message': 'Note not found'
+                }, status_code=404)
+
             return JSONResponse({
                 'success': True,
                 'data': note.to_dict(),
