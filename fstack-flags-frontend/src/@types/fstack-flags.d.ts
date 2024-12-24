@@ -98,3 +98,48 @@ export type FStackFlagsContext = {
    */
   dataLoading: boolean;
 };
+
+export type NoteDataSchema = {
+  /**
+   * The title of the note
+   *
+   * @example 'Do the thing'
+   */
+  title: string;
+
+  /**
+   * The content of a note
+   *
+   * @example 'Some kind of content for a note'
+   */
+  content: string;
+};
+
+/**
+ * @type NoteFormError
+ * An object that represents form submission errors when trying to create or edit an existing Note
+ */
+export type NoteFormError = Record<string, Array<string>>;
+
+export type NoteServiceDataResponse = {
+  /**
+   * @readonly
+   *
+   * An optional and read only object representing an updated or newly-created note
+   */
+  readonly noteData?: Note;
+
+  /**
+   * @readonly
+   *
+   * An optional message from the api that can indicate if an error occurred
+   */
+  readonly message?: string;
+
+  /**
+   * @readonly
+   *
+   * A boolean indicating the success of the operation
+   */
+  readonly success: boolean;
+};

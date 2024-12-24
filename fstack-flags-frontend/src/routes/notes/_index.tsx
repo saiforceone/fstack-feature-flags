@@ -1,18 +1,19 @@
 import { type ReactNode, useCallback, useEffect, useState } from "react";
+import { BiSolidEdit, BiSolidNote } from "react-icons/bi";
 import NotificationBlock from "../../components/shared/notification-block.tsx";
 import PageWrapper from "../../components/shared/page-wrapper.tsx";
-import { BiSolidNote } from "react-icons/bi";
 import NotesService from "../../services/notes-service.ts";
 import { Note } from "../../@types/fstack-flags";
 import NoteCard from "../../components/notes/note-card.tsx";
 import NoResultBlock from "../../components/shared/no-result-block.tsx";
+import { NavLink } from "react-router-dom";
 
 export default function NotesIndex(): ReactNode {
   const [filterText, setFilterText] = useState<string>("");
   const [notes, setNotes] = useState<Array<Note>>([]);
 
   const filteredNotes = filterText
-    ? notes.filter((note) => note.title.includes(filterText))
+    ? notes.filter((note) => note.title.toLowerCase().includes(filterText.toLowerCase()))
     : notes;
 
   const fetchNotes = useCallback(() => {
@@ -33,10 +34,13 @@ export default function NotesIndex(): ReactNode {
     <PageWrapper
       pageTitle='Note Listing'
       rightContent={
-        <span className='bg-slate-400 text-white p-2 rounded cursor-not-allowed flex items-center gap-2'>
+        <NavLink
+          className='bg-blue-600 text-white p-2 rounded flex items-center gap-2'
+          to='new-note'
+        >
           <BiSolidNote />
           Add Note
-        </span>
+        </NavLink>
       }
       subtitle='All your notes in one place'
     >
@@ -71,6 +75,17 @@ export default function NotesIndex(): ReactNode {
             <NoteCard
               key={`note-${note.id}`}
               note={note}
+              actionElements={
+                <>
+                  <NavLink
+                    className='underline text-blue-600 flex items-center gap-1'
+                    to={`/edit-note/${note.id}`}
+                  >
+                    <BiSolidEdit />
+                    Edit Note
+                  </NavLink>
+                </>
+              }
             />
           ))}
         </div>

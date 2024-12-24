@@ -142,7 +142,8 @@ class NotesController(HTTPEndpoint):
             })
 
         return JSONResponse({
-            'success': True
+            'success': True,
+            'data': note.to_dict()
         })
 
     async def delete(self, request: Request) -> JSONResponse:
