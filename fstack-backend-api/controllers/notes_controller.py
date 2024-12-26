@@ -2,7 +2,6 @@
 # Desc: Controller that provides CRUD operations for notes
 
 import sqlalchemy
-from starlette.endpoints import HTTPEndpoint
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 from starlette.types import Receive, Scope, Send

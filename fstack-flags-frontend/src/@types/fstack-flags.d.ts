@@ -143,3 +143,23 @@ export type NoteServiceDataResponse = {
    */
   readonly success: boolean;
 };
+
+export type FeatureFlag = {
+  /**
+   * @readonly
+   *
+   * A string representing the name of the flag
+   *
+   * @example `RENDER_NEW_UI`
+   */
+  readonly flag: string;
+
+  /**
+   * @readonly
+   *
+   * An optional description for the feature flag
+   *
+   * @example 'Indicates if the new UI should be used instead of the current'
+   */
+  readonly description?: string;
+};
