@@ -1,4 +1,6 @@
 // An interface that attempts to standardize services or API utilities
+import FeatureFlagsService from "../services/feature-flags-service.ts";
+
 export interface APIUtility {
   /**
    * @readonly
@@ -97,6 +99,11 @@ export type FStackFlagsContext = {
    * Indicates if data is loading at the app-level
    */
   dataLoading: boolean;
+
+  /**
+   * Contains feature flags retrieved from the API
+   */
+  featureFlags: Array<FeatureFlag>;
 };
 
 export type NoteDataSchema = {

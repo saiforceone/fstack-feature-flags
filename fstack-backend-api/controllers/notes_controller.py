@@ -10,6 +10,7 @@ from controllers.base_controller import BaseController
 from dtos.note_dto import NoteDTO
 from models import Note
 from models.base_model import BaseModel
+from support.require_feature_flag import require_feature_flag
 from support.db_utils import db_utils
 from support.validate_with_dto import validate_with_dto
 
@@ -146,6 +147,7 @@ class NotesController(BaseController):
 
         return JSONResponse(response)
 
+    @require_feature_flag(required_flag='NOTE_DELETE')
     async def delete(self, request: Request) -> JSONResponse:
         """
         Request handler for deleting an existing note
