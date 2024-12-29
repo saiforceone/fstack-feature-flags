@@ -6,6 +6,7 @@ import { BiSolidArrowToLeft, BiSolidSave, BiSolidTrash } from "react-icons/bi";
 import { NoteFormError } from "../../@types/fstack-flags";
 import NotesService from "../../services/notes-service.ts";
 import ConfirmDialog from "../../components/shared/confirm-dialog.tsx";
+import FeatureWrapper from "../../components/shared/feature-wrapper.tsx";
 
 type NoteProps = {
   isNewNote: boolean;
@@ -102,13 +103,15 @@ export default function Note({ isNewNote }: NoteProps): ReactNode {
       subtitle={`Use the form below to ${isNewNote ? "create a new note" : "edit an existing note"}`}
       rightContent={
         !isNewNote ? (
-          <button
-            className='flex items-center bg-red-600 hover:bg-red-500 duration-200 cursor-pointer text-white p-2 rounded gap-2'
-            onClick={() => setShowDeleteNote(true)}
-          >
-            <BiSolidTrash />
-            Delete Note
-          </button>
+          <FeatureWrapper requiredFeature='NOTE_DELETE'>
+            <button
+              className='flex items-center bg-red-600 hover:bg-red-500 duration-200 cursor-pointer text-white p-2 rounded gap-2'
+              onClick={() => setShowDeleteNote(true)}
+            >
+              <BiSolidTrash />
+              Delete Note
+            </button>
+          </FeatureWrapper>
         ) : null
       }
     >

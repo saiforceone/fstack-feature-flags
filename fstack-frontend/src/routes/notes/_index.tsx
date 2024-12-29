@@ -66,7 +66,6 @@ export default function NotesIndex(): ReactNode {
           edit them. The primary purpose of this tutorial is to give you an example of how you may
           implement feature flags in a fullstack application for both the frontend and backend.
         </p>
-        <p>We will be removing this component eventually.</p>
       </NotificationBlock>
       <div className='py-2'>
         <label
